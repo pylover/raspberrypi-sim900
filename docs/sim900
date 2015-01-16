@@ -1,0 +1,39 @@
+
+http://mt-system.ru/sites/default/files/documents/an_sim900-te_pcb_layout__schematic_for_reference_v1.01.pdf
+http://www.rhydolabz.com/index.php?main_page=product_info&products_id=1076
+
+Regulator 4.8-3.3
+
+Power-on
+Reset
+UART
+
+
+AT:
+
+sendSMS:
+
+AT+CMEE=1
+
+AT+CSMP=17,167,0,16
+
+AT+CMGF=1
+
+
+# SMS Center
+AT+CSCA="+919032055002"
+
+# Send SMS
+AT+CMGS="+989122451075"
+
+# Code page
+at+cscs="IRA"
+
+# Baud Rate
+AT+IPR=9600-115200
+
+# Enable Software follow control
+AT+IFC=1,1
+
+# Enable hardware flow control
+AT+IFC=2,2
