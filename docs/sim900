@@ -36,4 +36,4 @@ AT+IPR=9600-115200
 AT+IFC=1,1
 
 # Enable hardware flow control
-AT+IFC=2,2
+/=2,2
