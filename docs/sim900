@@ -11,23 +11,33 @@ UART
 
 AT:
 
-sendSMS:
-
+Error report
 AT+CMEE=1
-
-AT+CSMP=17,167,0,16
-
-AT+CMGF=1
-
 
 # SMS Center
 AT+CSCA="+919032055002"
 
-# Send SMS
+
+AT+CFUN=1
+AT+CFUN=0
+# Call
+nu
+
+# Hang up
+ATH
+
+ATD*141*1#
+
+# Send SMS:
+
+AT+CSMP=17,167,0,16
+AT+CMGF=1
+at+cscs="GSM"
 AT+CMGS="+989122451075"
 
 # Code page
 at+cscs="IRA"
+at+cscs="HEX"
 
 # Baud Rate
 AT+IPR=9600-115200

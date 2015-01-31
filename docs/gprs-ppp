@@ -1,0 +1,149 @@
+
+/etc/ppp/options-mobile
+
+
+    ttyAMA0
+    115200
+    lock
+    crtscts
+    modem
+    passive
+    novj
+    defaultroute
+    replacedefaultroute
+    noipdefault
+    usepeerdns
+    noauth
+    hide-password
+    persist
+    holdoff 10
+    maxfail 0
+    debug
+
+
+    $ mkdir /etc/ppp/peers
+    $ cd /etc/ppp/peers
+
+
+
+/etc/ppp/peers/mobile-auth
+
+    
+    file /etc/ppp/options-mobile
+    user "your_usr"
+    password "your_pass"
+    connect "/usr/sbin/chat -v -t15 -f /etc/ppp/chatscripts/mobile-modem.chat"
+
+
+/etc/ppp/peers/mobile-noauth
+
+
+    file /etc/ppp/options-mobile
+    connect "/usr/sbin/chat -v -t15 -f /etc/ppp/chatscripts/mobile-modem.chat"
+
+
+
+    $ mkdir /etc/ppp/chatscripts
+
+
+/etc/ppp/chatscripts/mobile-modem.chat
+
+
+    ABORT 'BUSY'
+    ABORT 'NO CARRIER'
+    ABORT 'VOICE'
+    ABORT 'NO DIALTONE'
+    ABORT 'NO DIAL TONE'
+    ABORT 'NO ANSWER'
+    ABORT 'DELAYED'
+    REPORT CONNECT
+    TIMEOUT 6
+    '' 'ATQ0'
+    'OK-AT-OK' 'ATZ'
+    TIMEOUT 3
+    'OK' @/etc/ppp/chatscripts/pin
+    'OK\d-AT-OK' 'ATI'
+    'OK' 'ATZ'
+    'OK' 'ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0'
+    'OK' @/etc/ppp/chatscripts/mode
+    'OK-AT-OK' @/etc/ppp/chatscripts/apn
+    'OK' 'ATDT*99***1#'
+    TIMEOUT 30
+    CONNECT ''
+      
+
+/etc/ppp/chatscripts/my-operator-apn
+
+
+    AT+CGDCONT=1,"IP","<apn-name>"
+
+
+/etc/ppp/chatscripts/pin.CODE
+
+
+    AT+CPIN=1234
+
+
+/etc/ppp/chatscripts/pin.NONE
+
+
+    AT
+
+
+/etc/ppp/chatscripts/mode.3G-only
+
+
+    AT\^SYSCFG=14,2,3fffffff,0,1
+
+
+/etc/ppp/chatscripts/mode.3G-pref
+
+
+    AT\^SYSCFG=2,2,3fffffff,0,1
+
+
+/etc/ppp/chatscripts/mode.GPRS-only
+
+
+    AT\^SYSCFG=13,1,3fffffff,0,0
+
+
+/etc/ppp/chatscripts/mode.GPRS-pref
+
+
+    AT\^SYSCFG=2,1,3fffffff,0,0
+
+
+/etc/ppp/chatscripts/mode.NONE
+
+
+    AT
+
+    
+Make some symbolic links:
+
+
+    $ ln -s /etc/ppp/chatscripts/my-operator-apn /etc/ppp/chatscripts/apn
+    $ ln -s /etc/ppp/chatscripts/mode.NONE /etc/ppp/chatscripts/mode
+    $ ln -s /etc/ppp/chatscripts/pin.NONE /etc/ppp/chatscripts/pin
+
+
+If you have to enter credentials use `mobile-auth`
+
+    
+    $ mv provider provider.example
+    $ ln -s /etc/ppp/peers/mobile-noauth /etc/ppp/peers/provider
+
+
+Check syslog in another console:
+
+
+    $ tail -f /var/log/syslog | grep -Ei 'pppd|chat'
+
+
+Finally issue the `pon` command to see the result:
+
+    $ pon
+
+
+
